@@ -18,11 +18,11 @@ section.filters button {
     margin-right: 30px;
     margin-top: 11px;
     margin-bottom: 11px;
-    opacity: 1;
+    opacity: 96%;
 }
 
 section.filters button:hover {
-    opacity: 90%;
+    opacity: 80%;
 }
 
 .locations, .amenities {
@@ -57,12 +57,13 @@ section.filters button:hover {
 .popover {
     display: none;
     width: 95%;
-    border: 1px solid #DDDDDD;
+    border: 1px solid #c2baba;
     background-color: #FAFAFA;
     border-radius: 4px;
     margin-left: -31px;
     margin-top: 7%;
     position: relative;
+    
 }
 .popover_list{
     padding:0px;
