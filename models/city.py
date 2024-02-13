@@ -1,11 +1,20 @@
 #!/usr/bin/python3
-"""This module creates a User class"""
 
+# Import the modules
 from models.base_model import BaseModel
+from models import storage
 
-
+# Define the class City that inherits from BaseModel
 class City(BaseModel):
-    """Class for managing city objects"""
+    # Public class attributes
+    state_id: str = "" # It will be the State.id
+    name: str = ""
 
-    state_id = ""
-    name = ""
+    # Override the save method to update the FileStorage
+    def save(self):
+        # Call the superclass save method
+        super().save()
+        # Update the FileStorage with the City instance
+        storage.new(self)
+        # Save the changes to the JSON file
+        storage.save()

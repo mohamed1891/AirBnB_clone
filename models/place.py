@@ -1,34 +1,29 @@
 #!usr/bin/python3
-"""
-    Class Place that inherits from BaseModel,
-    and contains all data about place class.
-"""
-from .base_model import BaseModel
 
+# Import the modules
+from models.base_model import BaseModel
+from models import storage
 
+# Define the class Place that inherits from BaseModel
 class Place(BaseModel):
-    """
-    Represents all the attributes.
+    # Public class attributes
+    city_id: str = "" # It will be the City.id
+    user_id: str = "" # It will be the User.id
+    name: str = ""
+    description: str = ""
+    number_rooms: int = 0
+    number_bathrooms: int = 0
+    max_guest: int = 0
+    price_by_night: int = 0
+    latitude: float = 0.0
+    longitude: float = 0.0
+    amenity_ids: list = [] # It will be the list of Amenity.id later
 
-    Attributes:
-        city_id = city.id()
-        user_id = user.id()
-        name = place_name
-        description = information about the place
-        number_rooms = number of rooms
-        max_guest = maximum numbers of guests
-        price_by_night = the cost of the place for night
-        latitude = exact coordinates for the place
-        longitude = exact coordinates for the place
-        amenity_ids = list of amenity.id
-    """
-    city_id = ""
-    user_id = ""
-    name = ""
-    description = ""
-    number_rooms = 0
-    max_guest = 0
-    price_by_night = 0
-    latitude = 0.0
-    longitude = 0.0
-    amenity_ids = []
+    # Override the save method to update the FileStorage
+    def save(self):
+        # Call the superclass save method
+        super().save()
+        # Update the FileStorage with the Place instance
+        storage.new(self)
+        # Save the changes to the JSON file
+        storage.save()

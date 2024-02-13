@@ -1,69 +1,62 @@
+#!/usr/bin/python3
+
+# Import the modules
 import os
 import json
-from datetime import datetime
-from models.base_model import BaseModel
-from models.user import User
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
-
-
+import datetime
+ 
+# Define the class FileStorage
 class FileStorage:
-    """
-    FileStorage class
-    """
-
+    # Class attributes
     __file_path = "file.json"
     __objects = {}
+    # Define a dictionary of valid classes
+    def classes(self):
+        return {
+            "BaseModel": BaseModel,
+            "User": User,
+            "Place": Place,
+            "State": State,
+            "City": City,
+            "Amenity": Amenity,
+            "Review": Review
+        }
 
+    # Methods
     def all(self):
-        """returns the dictionary __objects"""
+        # Return the dictionary of objects
         return self.__objects
 
     def new(self, obj):
-        """sets in __objects the obj with key <obj class name>.id"""
-        self.__objects[f"{type(obj).__name__}.{obj.id}"] = obj
+        # Add the object to the dictionary of objects
+        # The key is the class name and id, and the value is the object
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.__objects[key] = obj
 
     def save(self):
-        """serializes __objects to the JSON file (path: __file_path)"""
-        with open(self.__file_path, mode="w") as f:
-            dict_storage = {k: v.to_dict() for k, v in self.__objects.items()}
-            json.dump(dict_storage, f)
-
-    def classes(self):
-        """Returns a dictionary of valid classes and their references."""
-        classes = {"BaseModel": BaseModel,
-                   "User": User,
-                   "State": State,
-                   "City": City,
-                   "Amenity": Amenity,
-                   "Place": Place,
-                   "Review": Review}
-        return classes
+        # Save the objects to the JSON file
+        # Create an empty dictionary to store the serialized objects
+        obj_dict = {k: v.to_dict() for k, v in self.__objects.items()}
+        with open(self.__file_path, "w", encoding="utf-8") as f:
+            json.dump(obj_dict, f)
 
     def reload(self):
-        """
-        deserializes the JSON file to __objects
-        (only if the JSON file (__file_path) exists ; otherwise,
-        do nothing. If the file doesn’t exist, no exception should be raised)
-        """
+        #deserializes the JSON file to __objects
+        #(only if the JSON file (__file_path) exists ; otherwise,
+        #do nothing. If the file doesn’t exist, no exception should be raised)
         if not os.path.isfile(self.__file_path):
             return
         with open(self.__file_path, "r", encoding="utf-8") as f:
             obj_dict = json.load(f)
-            obj_dict = {k: self.classes()[v["__class__"]]
-                        (**v) for k, v in obj_dict.items()}
+            obj_dict = {k: self.classes()[v["__class__"]](**v) for k, v in obj_dict.items()}
             self.__objects = obj_dict
-
     def attributes(self):
         """Returns the valid attributes and their types for classname."""
         attributes = {
             "BaseModel":
                      {"id": str,
-                      "created_at": datetime,
-                      "updated_at": datetime},
+                      "created_at": datetime.datetime,
+                      "updated_at": datetime.datetime},
             "User":
                      {"email": str,
                       "password": str,
