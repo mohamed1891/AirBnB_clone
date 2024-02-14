@@ -1,80 +1,122 @@
 #!/usr/bin/python3
+"""Command interpreter module"""
 
 import cmd
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models import storage
+import shlex
 
 class HBNBCommand(cmd.Cmd):
-    # Class attribute that stores the custom prompt
+    """HBNBCommand class"""
     prompt = "(hbnb) "
 
-    def do_create(self, line):
-        if not line:
+    def do_create(self, arg):
+        """Creates a new instance of BaseModel"""
+        if not arg:
             print("** class name missing **")
-            return
-
-        class_name = line.strip()
-        if class_name not in self.storage.classes():
+        elif arg not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
             print("** class doesn't exist **")
-            return
+        else:
+            new_instance = eval(arg)()
+            new_instance.save()
+            print(new_instance.id)
 
-        new_instance = self.storage.classes()[class_name]()
-        new_instance.save()
-        print(new_instance.id)
-
-    def do_show(self, line):
-        if not line:
+    def do_show(self, arg):
+        """Prints the string representation of an instance"""
+        args = shlex.split(arg)
+        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
             print("** class name missing **")
-            return
-
-        words = line.split()
-        if words[0] not in storage.classes():
-            print("** class doesn't exist **")
-            return
-
-        if len(words) < 2:
+        elif len(args) < 2:
             print("** instance id missing **")
-            return
-
-        key = "{}.{}".format(words[0], words[1])
-        instance = storage.all().get(key)
-        if instance is None:
-            print("** no instance found **")
         else:
-            print(instance)
-
-    def do_destroy(self, line):
-        # If the line is empty, print an error message
-        if line == "" or line is None:
-            print("** class name missing **")
-        # Otherwise, split the line by spaces
-        else:
-            words = line.split(' ')
-            # If the first word is not a valid class name, print an error message
-            if words[0] not in storage.classes():
-                print("** class doesn't exist **")
-            # If the second word is missing, print an error message
-            elif len(words) < 2:
-                print("** instance id missing **")
-            # Otherwise, delete the instance
+            key = "{}.{}".format(args[0], args[1])
+            if key not in storage.all():
+                print("** no instance found **")
             else:
-                # Construct the key with the class name and id
-                key = "{}.{}".format(words[0], words[1])
-                if key not in storage.all():
-                    print("** no instance found **")
-                # Otherwise, delete the instance from the storage
-                else:
-                    del storage.all()[key]
-                    # Save the changes to the file
-                    storage.save()
+                print(storage.all()[key])
 
-    def do_all(self, line):
-        if not line:
+    def do_destroy(self, arg):
+        """Deletes an instance"""
+        args = shlex.split(arg)
+        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
+            print("** class name missing **")
+        elif len(args) < 2:
+            print("** instance id missing **")
+        else:
+            key = "{}.{}".format(args[0], args[1])
+            if key not in storage.all():
+                print("** no instance found **")
+            else:
+                del storage.all()[key]
+                storage.save()
+
+    def do_all(self, arg):
+        """Prints all string representation of all instances"""
+        args = shlex.split(arg)
+        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
             print('\n'.join(str(instance) for instance in storage.all().values()))
-        elif line in storage.classes():
-            class_name = line.strip()
+        else:
+            class_name = args[0]
             instances = [str(instance) for instance in storage.all().values() if instance.__class__.__name__ == class_name]
             print('\n'.join(instances))
+
+    def do_update(self, arg):
+        """Updates an instance"""
+        args = shlex.split(arg)
+        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
+            print("** class name missing **")
+        elif len(args) < 2:
+            print("** instance id missing **")
+        elif len(args) < 3:
+            print("** attribute name missing **")
+        elif len(args) < 4:
+            print("** value missing **")
         else:
-            print("** class doesn't exist **")
+            key = "{}.{}".format(args[0], args[1])
+            if key not in storage.all():
+                print("** no instance found **")
+            else:
+                instance = storage.all()[key]
+                setattr(instance, args[2], args[3])
+                storage.save()
+
+    def emptyline(self):
+        """Do nothing on an empty line"""
+        pass
+
+    def do_quit(self, arg):
+        """Quit command"""
+        return True
+
+    def do_EOF(self, arg):
+        """EOF command"""
+        return True
+
+    def help_create(self):
+        """Print help for create command"""
+        print("Create a new instance of BaseModel, saves it, and prints the id")
+
+    def help_show(self):
+        """Print help for show command"""
+        print("Prints the string representation of an instance based on the class name and id")
+
+    def help_destroy(self):
+        """Print help for destroy command"""
+        print("Deletes an instance based on the class name and id")
+
+    def help_all(self):
+        """Print help for all command"""
+        print("Prints all string representation of all instances based or not on the class name")
+
+    def help_update(self):
+        """Print help for update command"""
+        print("Updates an instance based on the class name and id")
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
+

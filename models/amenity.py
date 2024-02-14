@@ -1,17 +1,7 @@
 #!/usr/bin/python3
-
-#amenity module
+"""Amenity module"""
 from models.base_model import BaseModel
 
 class Amenity(BaseModel):
-    """
-    Amenity class
-    """
-
-    name: str = None
-
-    def __init__(self, *args, **kwargs):
-        """Overriding constructor"""
-        super().__init__(*args, **kwargs)
-        if notkwargs:
-            self.name = ""
+    """Amenity class"""
+    name = ""
