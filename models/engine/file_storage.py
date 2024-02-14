@@ -4,12 +4,41 @@
 import os
 import json
 import datetime
- 
+
+# Placeholder for the BaseModel class definition
+class BaseModel:
+    pass
+
+# Placeholder for the User class definition
+class User:
+    pass
+
+# Placeholder for the Place class definition
+class Place:
+    pass
+
+# Placeholder for the State class definition
+class State:
+    pass
+
+# Placeholder for the City class definition
+class City:
+    pass
+
+# Placeholder for the Amenity class definition
+class Amenity:
+    pass
+
+# Placeholder for the Review class definition
+class Review:
+    pass
+
 # Define the class FileStorage
 class FileStorage:
     # Class attributes
     __file_path = "file.json"
     __objects = {}
+
     # Define a dictionary of valid classes
     def classes(self):
         return {
@@ -41,9 +70,9 @@ class FileStorage:
             json.dump(obj_dict, f)
 
     def reload(self):
-        #deserializes the JSON file to __objects
-        #(only if the JSON file (__file_path) exists ; otherwise,
-        #do nothing. If the file doesn’t exist, no exception should be raised)
+        # Deserializes the JSON file to __objects
+        # (only if the JSON file (__file_path) exists; otherwise,
+        # do nothing. If the file doesn’t exist, no exception should be raised)
         if not os.path.isfile(self.__file_path):
             return
         with open(self.__file_path, "r", encoding="utf-8") as f:
@@ -52,39 +81,39 @@ class FileStorage:
             self.__objects = obj_dict
 
     def attributes(self):
-            #Returns the valid attributes and their types for classname.
-            attributes = {
-                "BaseModel":
-                        {"id": str,
-                        "created_at": datetime.datetime,
-                        "updated_at": datetime.datetime},
-                "User":
-                        {"email": str,
-                        "password": str,
-                        "first_name": str,
-                        "last_name": str},
-                "State":
-                        {"name": str},
-                "City":
-                        {"state_id": str,
-                        "name": str},
-                "Amenity":
-                        {"name": str},
-                "Place":
-                        {"city_id": str,
-                        "user_id": str,
-                        "name": str,
-                        "description": str,
-                        "number_rooms": int,
-                        "number_bathrooms": int,
-                        "max_guest": int,
-                        "price_by_night": int,
-                        "latitude": float,
-                        "longitude": float,
-                        "amenity_ids": list},
-                "Review":
-                        {"place_id": str,
-                        "user_id": str,
-                        "text": str}
-                        }
-            return attributes
+        # Returns the valid attributes and their types for classname.
+        attributes = {
+            "BaseModel":
+                {"id": str,
+                 "created_at": datetime.datetime,
+                 "updated_at": datetime.datetime},
+            "User":
+                {"email": str,
+                 "password": str,
+                 "first_name": str,
+                 "last_name": str},
+            "State":
+                {"name": str},
+            "City":
+                {"state_id": str,
+                 "name": str},
+            "Amenity":
+                {"name": str},
+            "Place":
+                {"city_id": str,
+                 "user_id": str,
+                 "name": str,
+                 "description": str,
+                 "number_rooms": int,
+                 "number_bathrooms": int,
+                 "max_guest": int,
+                 "price_by_night": int,
+                 "latitude": float,
+                 "longitude": float,
+                 "amenity_ids": list},
+            "Review":
+                {"place_id": str,
+                 "user_id": str,
+                 "text": str}
+        }
+        return attributes
