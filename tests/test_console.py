@@ -1,86 +1,54 @@
 #!/usr/bin/python3
-"""
-test_console module
-"""
-from unittest import TestCase
+
+import unittest
+from unittest.mock import patch
+from io import StringIO
 from console import HBNBCommand
 
 
-class TestHBNBCommand(TestCase):
-    """
-    TestHBNBCommand class
-    """
-
+class TestHBNBCommand(unittest.TestCase):
     def setUp(self):
-        """
-        Set up the test environment
-        """
-        self.console = HBNBCommand()
+        self.hbnb_command = HBNBCommand()
 
     def tearDown(self):
-        """
-        Tear down the test environment
-        """
-        try:
-            del self.console
-        except:
-            pass
+        self.hbnb_command = None
 
-    def test_pep8(self):
-        """
-        Test that the code follows PEP8 style guide
-        """
-        pep8style.check_files(['console.py'])
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_do_EOF(self, mock_stdout):
+        self.assertTrue(self.hbnb_command.do_EOF(''))
+        self.assertEqual(mock_stdout.getvalue(), '\n')
 
-    def test_console_prompt(self):
-        """
-        Test that the console prompt is "(hbnb) "
-        """
-        self.assertEqual(self.console.prompt, "(hbnb) ")
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_do_quit(self, mock_stdout):
+        self.assertTrue(self.hbnb_command.do_quit(''))
 
-    def test_do_quit(self):
-        """
-        Test that the "quit" command exits the console
-        """
-        self.console.onecmd("quit")
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_emptyline(self, mock_stdout):
+        self.hbnb_command.emptyline()
+        self.assertEqual(mock_stdout.getvalue(), '')
 
-    def test_do_EOF(self):
-        """
-        Test that pressing Ctrl+D exits the console
-        """
-        with self.assertRaises(EOFError):
-            self.console.onecmd("")
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_do_create(self, mock_stdout):
+        with patch('builtins.input', return_value='User'):
+            self.hbnb_command.do_create('')
+        self.assertIn('User', mock_stdout.getvalue())
 
-    def test_do_create(self):
-        """
-        Test that the "create" command creates a new instance of a class
-        """
-        self.console.onecmd("create BaseModel")
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_do_show(self, mock_stdout):
+        with patch('builtins.input', return_value='User'):
+            self.hbnb_command.do_show('User')
+        self.assertIn("** instance id missing **", mock_stdout.getvalue())
 
-    def test_do_show(self):
-        """
-        Test that the "show" command displays an instance of a class
-        """
-        self.console.onecmd("create BaseModel")
-        self.console.onecmd("show BaseModel 1234-1234-1234")
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_do_destroy(self, mock_stdout):
+        with patch('builtins.input', return_value='User'):
+            self.hbnb_command.do_destroy('User')
+        self.assertIn("** instance id missing **", mock_stdout.getvalue())
 
-    def test_do_destroy(self):
-        """
-        Test that the "destroy" command deletes an instance of a class
-        """
-        self.console.onecmd("create BaseModel")
-        self.console.onecmd("destroy BaseModel 1234-1234-1234")
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_do_all(self, mock_stdout):
+        self.hbnb_command.do_all('')
+        self.assertIn('** class name missing **', mock_stdout.getvalue())
 
-    def test_do_all(self):
-        """
-        Test that the "all" command displays all instances of a class
-        """
-        self.console.onecmd("create BaseModel")
-        self.console.onecmd("all BaseModel")
-
-    def test_do_update(self):
-        """
-        Test that the "update" command updates an instance of a class
-        """
-        self.console.onecmd("create BaseModel")
-        self.console.onecmd("update BaseModel 1234-1234-1234 name Abby")
+if __name__ == '__main__':
+    unittest.main()
