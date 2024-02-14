@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""Command interpreter module"""
+
+# Command interpreter module
 import cmd
 from models.base_model import BaseModel
 from models.user import User
@@ -10,12 +11,19 @@ from models.place import Place
 from models import storage
 import shlex
 
+
+# HBNBCommand class
+
 class HBNBCommand(cmd.Cmd):
 
+    prompt = "(hbnb)"
+
+# Creates a new instance of BaseModel
     def do_create(self, arg):
         if not arg:
             print("** class name missing **")
-        elif arg not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
+        elif arg not in ["BaseModel", "State", "City",
+                         "Amenity", "Place", "Review"]:
             print("** class doesn't exist **")
         else:
             new_instance = eval(arg)()
@@ -23,9 +31,10 @@ class HBNBCommand(cmd.Cmd):
             print(new_instance.id)
 
     def do_show(self, arg):
-        """Prints the string representation of an instance"""
+        # Prints the string representation of an instance
         args = shlex.split(arg)
-        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
+        if not args or args[0] not in ["BaseModel", "State",
+                                       "City", "Amenity", "Place", "Review"]:
             print("** class name missing **")
         elif len(args) < 2:
             print("** instance id missing **")
@@ -37,9 +46,10 @@ class HBNBCommand(cmd.Cmd):
                 print(storage.all()[key])
 
     def do_destroy(self, arg):
-        """Deletes an instance"""
+        # Deletes an instance
         args = shlex.split(arg)
-        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
+        if not args or args[0] not in ["BaseModel", "State",
+                                       "City", "Amenity", "Place", "Review"]:
             print("** class name missing **")
         elif len(args) < 2:
             print("** instance id missing **")
@@ -52,19 +62,23 @@ class HBNBCommand(cmd.Cmd):
                 storage.save()
 
     def do_all(self, arg):
-        """Prints all string representation of all instances"""
+        # Prints all string representation of all instances
         args = shlex.split(arg)
-        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
-            print('\n'.join(str(instance) for instance in storage.all().values()))
+        if not args or args[0] not in ["BaseModel", "State",
+                                       "City", "Amenity", "Place", "Review"]:
+            print(*map(str, storage.all().values()), sep='\n')
         else:
             class_name = args[0]
-            instances = [str(instance) for instance in storage.all().values() if instance.__class__.__name__ == class_name]
+            instances = filter(lambda i: i.__class__.__name__ == class_name,
+                               storage.all().values())
+            instances = list(map(str, instances))
             print('\n'.join(instances))
 
     def do_update(self, arg):
         """Updates an instance"""
         args = shlex.split(arg)
-        if not args or args[0] not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
+        if not args or args[0] not in ["BaseModel", "State",
+                                       "City", "Amenity", "Place", "Review"]:
             print("** class name missing **")
         elif len(args) < 2:
             print("** instance id missing **")
@@ -95,11 +109,13 @@ class HBNBCommand(cmd.Cmd):
 
     def help_create(self):
         """Print help for create command"""
-        print("Create a new instance of BaseModel, saves it, and prints the id")
+        print("Create a new instance of BaseModel, "
+              "saves it, and prints the id")
 
     def help_show(self):
         """Print help for show command"""
-        print("Prints the string representation of an instance based on the class name and id")
+        print("Prints the string representation "
+              "of an instance based on the class name and id")
 
     def help_destroy(self):
         """Print help for destroy command"""
@@ -107,11 +123,13 @@ class HBNBCommand(cmd.Cmd):
 
     def help_all(self):
         """Print help for all command"""
-        print("Prints all string representation of all instances based or not on the class name")
+        print("Prints all string represent in  "
+              "all instances based or not on the class name")
 
     def help_update(self):
         """Print help for update command"""
         print("Updates an instance based on the class name and id")
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
