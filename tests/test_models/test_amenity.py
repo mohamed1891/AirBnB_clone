@@ -2,27 +2,36 @@
 
 # Import the modules
 import unittest
-from unittest.mock import patch
+from models.amenity import Amenity
 from models.base_model import BaseModel
 
 class TestAmenity(unittest.TestCase):
-    def setUp(self):
-        self.amenity = Amenity()
+    """Test cases for the Amenity class"""
 
-    @patch('models.storage.save')
-    def test_save_method(self, mock_storage_save):
-        # Assuming 'save' method is implemented in the Amenity class
-        # You can add test cases to check if saving works as expected
+    def test_is_subclass(self):
+        """Test that Amenity is a subclass of BaseModel"""
+        self.assertTrue(issubclass(Amenity, BaseModel))
 
-        # Call the save method
-        self.amenity.save()
+    def test_attributes(self):
+        """Test that the Amenity class has the correct attributes"""
+        amenity = Amenity()
+        self.assertTrue(hasattr(amenity, "id"))
+        self.assertTrue(hasattr(amenity, "created_at"))
+        self.assertTrue(hasattr(amenity, "updated_at"))
+        self.assertTrue(hasattr(amenity, "name"))
 
-        # Check if the superclass save method is called
-        self.assertTrue(mock_storage_save.called)
+    def test_attribute_types(self):
+        """Test that the attributes have the correct types"""
+        amenity = Amenity()
+        self.assertIsInstance(amenity.id, str)
+        self.assertIsInstance(amenity.created_at, datetime)
+        self.assertIsInstance(amenity.updated_at, datetime)
+        self.assertIsInstance(amenity.name, str)
 
-        # Check if the Amenity instance is added to storage
-        self.assertIn(self.amenity.id, storage.all())
+    def test_name_default_value(self):
+        """Test that the name attribute has a default value of None"""
+        amenity = Amenity()
+        self.assertIsNone(amenity.name)
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

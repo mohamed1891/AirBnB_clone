@@ -1,5 +1,7 @@
-# Create an instance of FileStorage
-from models.engine.file_storage import FileStorage
+#!/usr/bin/python3
 
-storage = FileStorage()
-storage.reload()
+def storage():
+    from models.engine.file_storage import FileStorage
+    storage = FileStorage()
+    storage.reload()
+    return storage

@@ -4,29 +4,32 @@
 import cmd
 import re
 import json
+from models import storage
+from models.engine.file_storage import FileStorage
 
 # Define the class HBNBCommand that inherits from cmd.Cmd
 class HBNBCommand(cmd.Cmd):
     # Class attribute that stores the custom prompt
     prompt = "(hbnb) "
 
-    # Method to handle commands that do not match any predefined ones
+    def __init__(self):
+        super().__init__()
+        self.storage = FileStorage()
+        self.storage.reload()
+
     def default(self, line):
         # Call the _precmd method to check for class syntax
         self._precmd(line)
 
-    # Method to intercept commands to test for class syntax
     def _precmd(self, line):
-        # Use regular expressions to match the pattern <class name>.<method name>(<arguments>)
         match = re.search(r"^(\w+)\.(\w+)\((.*)\)$", line)
-        # If no match, return the line as it is
         if not match:
             return line
-        # Extract the class name, method name, and arguments from the match
+
         classname = match.group(1)
         method = match.group(2)
         args = match.group(3)
-        # Use regular expressions to match the pattern "<id>" or "<id>", <other arguments>
+
         match_uid_and_args = re.search(r'^"([^"]+)"(?:, (.*))?$', args)
         # If match, extract the id and the other arguments
         if match_uid_and_args:
@@ -46,14 +49,10 @@ class HBNBCommand(cmd.Cmd):
             if match_dict:
                 self.update_dict(classname, uid, match_dict.group(1))
                 return ""
-            # Otherwise, use regular expressions to match the pattern "<attribute>" or "<attribute>", <value>
-            match_attr_and_value = re.search(
-                r'^(?:"([^"]+)")?(?:, (.*))?$', attr_or_dict)
-            # If match, extract the attribute and value
+            match_attr_and_value = re.search(r'^(?:"([^"]+)")?(?:, (.*))?$', attr_or_dict)
             if match_attr_and_value:
-                attr_and_value = (match_attr_and_value.group(
-                    1) or "") + " " + (match_attr_and_value.group(2) or "")
-        # Construct the command with the class name, method name, id, and attribute and value
+                attr_and_value = (match_attr_and_value.group(1) or "") + " " + (match_attr_and_value.group(2) or "")
+
         command = method + " " + classname + " " + uid + " " + attr_and_value
         # Call the onecmd method with the command
         self.onecmd(command)
@@ -90,9 +89,10 @@ class HBNBCommand(cmd.Cmd):
                 for attribute, value in d.items():
                     # If the attribute is valid, convert the value to the appropriate type
                     if attribute in attributes:
-                    setattr(storage.all()[key], attribute, value)
+                        setattr(storage.all()[key], attribute, value)
                 # Save the instance to the file
                 storage.all()[key].save()
+
 
     # Method to handle the EOF (End Of File) character
     def do_EOF(self, line):
@@ -113,44 +113,40 @@ class HBNBCommand(cmd.Cmd):
 
     # Method to create an instance of a class
     def do_create(self, line):
-        # If the line is empty, print an error message
-        if line == "" or line is None:
+        if not line:
             print("** class name missing **")
-        # If the line is not a valid class name, print an error message
-        elif line not in storage.classes():
+            return
+
+        class_name = line.strip()
+        if class_name not in self.storage.classes():
             print("** class doesn't exist **")
-        # Otherwise, create an instance of the class
-        else:
-            # Instantiate an object of the class
-            b = storage.classes()
-            # Save the object to the file
-            b.save()
-            # Print the id of the object
-            print(b.id)
+            return
+
+        new_instance = self.storage.classes()[class_name]()
+        new_instance.save()
+        print(new_instance.id)
 
     # Method to show the string representation of an instance
     def do_show(self, line):
-        # If the line is empty, print an error message
-        if line == "" or line is None:
+        if not line:
             print("** class name missing **")
-        # Otherwise, split the line by spaces
-        else:
-            words = line.split(' ')
-            # If the first word is not a valid class name, print an error message
-            if words[0] not in storage.classes():
-                print("** class doesn't exist **")
-            # If the second word is missing, print an error message
-            elif len(words) < 2:
-                print("** instance id missing **")
-            # Otherwise, show the instance
-            else:
-                # Construct the key with the class name and id
-                key = "{}.{}".format(words[0], words[1])
+            return
+
+        words = line.split()
+        if words[0] not in storage.classes():
+            print("** class doesn't exist **")
+            return
+
+        if len(words) < 2:
+            print("** instance id missing **")
+            return
+
+        key = "{}.{}".format(words[0], words[1])
         instance = storage.all().get(key)
         if instance is None:
             print("** no instance found **")
-                else:
-                    print(storage.all()[key])
+        else:
+            print(instance)
 
     def do_destroy(self, line):
         # If the line is empty, print an error message
@@ -179,28 +175,12 @@ class HBNBCommand(cmd.Cmd):
 
     # Method to print all string representation of all instances based or not on the class name
     def do_all(self, line):
-        # If the line is empty, print all instances
-        if line == "" or line is None:
-            # Create an empty list to store the string representations
-            list_str = []
-            # Loop through the storage
-            for key, value in storage.all().items():
-                # Append the string representation of each instance to the list
-                list_str.append(str(value))
-            # Print the list
-            print(list_str)
-        # If the line is a valid class name, print all instances of that class
+        if not line:
+            print('\n'.join(str(instance) for instance in storage.all().values()))
         elif line in storage.classes():
-            # Create an empty list to store the string representations
-            list_str = []
-            # Loop through the storage
-            for key, value in storage.all().items():
-                # If the instance belongs to the class, append the string representation to the list
-                if value.__class__.__name__ == line:
-                    list_str.append(str(value))
-            # Print the list
-            print(list_str)
-        # If the line is not a valid class name, print an error message
+            class_name = line.strip()
+            instances = [str(instance) for instance in storage.all().values() if instance.__class__.__name__ == class_name]
+            print('\n'.join(instances))
         else:
             print("** class doesn't exist **")
 

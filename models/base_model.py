@@ -1,49 +1,55 @@
 #!/usr/bin/python3
 
-# Import the modules
-import uuid
+"""
+base_model module
+"""
+from uuid import uuid4
 from datetime import datetime
-from models.__init__ import storage
+from models import storage
+
+def some_function():
+    from models.engine.file_storage import FileStorage
+    storage = FileStorage()
+    storage.reload()
+
 
 class BaseModel:
-    # Class attribute that stores the file path
-    FILE_PATH = "file.json"
+    """
+    BaseModel class
+    """
 
     def __init__(self, *args, **kwargs):
-        # Initialize the instance attributes
-        self.id = str(uuid.uuid4()) # assign a unique id
-        self.created_at = datetime.now() # assign the current datetime
-        self.updated_at = datetime.now() # assign the current datetime
-        # If kwargs is not empty, update the instance attributes with the values from the dictionary
-        if kwargs:
-            for key, value in kwargs.items():
-                if key in ("created_at", "updated_at"):
-                    value = datetime.fromisoformat(value)
-                # Set the attribute with the key and value
-                setattr(self, key, value)
-        # Add the instance to the storage
-        storage.new(self)
-
-    # String representation
+        """Initialization method"""
+        if kwargs is not None and kwargs != {}:
+            for key in kwargs:
+                if key == "created_at":
+                    self.__dict__["created_at"] = datetime.strptime(
+                        kwargs["created_at"], "%Y-%m-%dT%H:%M:%S.%f")
+                elif key == "updated_at":
+                    self.__dict__["updated_at"] = datetime.strptime(
+                        kwargs["updated_at"], "%Y-%m-%dT%H:%M:%S.%f")
+                else:
+                    self.__dict__[key] = kwargs[key]
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            storage.new(self)
+            
     def __str__(self):
-        # Return a formatted string with the class name, id, and dictionary of the instance
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+        """String representation method"""
+        return "[{}] ({}) {}".format(type(self).__name__, self.id, self.__dict__)
 
-    # Method to update the updated_at attribute and save the instance to the file
     def save(self):
-        # Update the updated_at attribute with the current datetime
+        """Update the public instance attribute 'updated_at' with the current datetime"""
         self.updated_at = datetime.now()
-        # Save the instance to the file
         storage.save()
 
-    # Method to return a dictionary representation of the instance
     def to_dict(self):
-        # Create a copy of the instance dictionary
-        dict_copy = self.__dict__.copy()
-        # Add the class name to the dictionary
-        dict_copy["__class__"] = self.__class__.__name__
-        # Convert the datetime objects to strings in ISO format
-        dict_copy["created_at"] = self.created_at.isoformat()
-        dict_copy["updated_at"] = self.updated_at.isoformat()
-        # Return the dictionary
-        return dict_copy
+        """Return a dictionary containing all keys/values of __dict__ of the instance"""
+        my_dict = self.__dict__.copy()
+        my_dict["__class__"] = type(self).__name__
+        my_dict["created_at"] = my_dict["created_at"].isoformat()
+        my_dict["updated_at"] = my_dict["updated_at"].isoformat()
+        return my_dict
+

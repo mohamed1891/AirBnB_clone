@@ -1,17 +1,17 @@
 #!/usr/bin/python3
 
-# Import the modules
+#amenity module
 from models.base_model import BaseModel
 
 class Amenity(BaseModel):
-    # Public class attribute
-    name: str = ""
+    """
+    Amenity class
+    """
 
-    # Override the save method to update the FileStorage
-    def save(self):
-        # Call the superclass save method
-        super().save()
-        # Update the FileStorage with the Amenity instance
-        storage.new(self)
-        # Save the changes to the JSON file
-        storage.save()
+    name: str = None
+
+    def __init__(self, *args, **kwargs):
+        """Overriding constructor"""
+        super().__init__(*args, **kwargs)
+        if notkwargs:
+            self.name = ""
