@@ -10,6 +10,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
+
 class FileStorage:
     """File storage class"""
     __file_path = "file.json"
@@ -33,7 +34,8 @@ class FileStorage:
     def reload(self):
         """Deserializes the JSON file to __objects"""
         try:
-            with open(FileStorage.__file_path, mode='r', encoding='utf-8') as f:
+            with open(FileStorage.__file_path, mode='r',
+                      encoding='utf-8') as f:
                 json_dict = json.load(f)
             for key, value in json_dict.items():
                 class_name = value["__class__"]
@@ -42,6 +44,7 @@ class FileStorage:
                 FileStorage.__objects[key] = obj
         except FileNotFoundError:
             pass
+
 
 # Create a unique FileStorage instance for the application
 storage = FileStorage()
