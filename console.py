@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Command interpreter module"""
-
 import cmd
 from models.base_model import BaseModel
 from models.user import User
@@ -12,11 +11,8 @@ from models import storage
 import shlex
 
 class HBNBCommand(cmd.Cmd):
-    """HBNBCommand class"""
-    prompt = "(hbnb) "
 
     def do_create(self, arg):
-        """Creates a new instance of BaseModel"""
         if not arg:
             print("** class name missing **")
         elif arg not in ["BaseModel", "State", "City", "Amenity", "Place", "Review"]:
@@ -119,4 +115,3 @@ class HBNBCommand(cmd.Cmd):
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-
