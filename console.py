@@ -2,8 +2,6 @@
 
 # Import the modules
 import cmd
-from models.base_model import BaseModel
-from models import storage
 import re
 import json
 
@@ -92,8 +90,6 @@ class HBNBCommand(cmd.Cmd):
                 for attribute, value in d.items():
                     # If the attribute is valid, convert the value to the appropriate type
                     if attribute in attributes:
-                        value = attributes
-                    # Set the attribute and value to the instance
                     setattr(storage.all()[key], attribute, value)
                 # Save the instance to the file
                 storage.all()[key].save()
@@ -150,14 +146,12 @@ class HBNBCommand(cmd.Cmd):
             else:
                 # Construct the key with the class name and id
                 key = "{}.{}".format(words[0], words[1])
-                # If the key is not in the storage, print an error message
-                if key not in storage.all():
-                    print("** no instance found **")
-                # Otherwise, print the string representation of the instance
+        instance = storage.all().get(key)
+        if instance is None:
+            print("** no instance found **")
                 else:
                     print(storage.all()[key])
 
-    # Method to delete an instance based on the class name and id
     def do_destroy(self, line):
         # If the line is empty, print an error message
         if line == "" or line is None:
@@ -175,7 +169,6 @@ class HBNBCommand(cmd.Cmd):
             else:
                 # Construct the key with the class name and id
                 key = "{}.{}".format(words[0], words[1])
-                # If the key is not in the storage, print an error message
                 if key not in storage.all():
                     print("** no instance found **")
                 # Otherwise, delete the instance from the storage
@@ -211,7 +204,6 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** class doesn't exist **")
 
-# Check if the file is executed as the main program
 if __name__ == '__main__':
     # Create an instance of the HBNBCommand class and start the command loop
     HBNBCommand().cmdloop()

@@ -5,12 +5,10 @@ import uuid
 from datetime import datetime
 from models.__init__ import storage
 
-# Define the class BaseModel
 class BaseModel:
     # Class attribute that stores the file path
     FILE_PATH = "file.json"
 
-    # Constructor
     def __init__(self, *args, **kwargs):
         # Initialize the instance attributes
         self.id = str(uuid.uuid4()) # assign a unique id
@@ -19,7 +17,6 @@ class BaseModel:
         # If kwargs is not empty, update the instance attributes with the values from the dictionary
         if kwargs:
             for key, value in kwargs.items():
-                # Convert the strings to datetime objects for created_at and updated_at
                 if key in ("created_at", "updated_at"):
                     value = datetime.fromisoformat(value)
                 # Set the attribute with the key and value

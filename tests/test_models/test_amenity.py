@@ -4,10 +4,7 @@
 import unittest
 from unittest.mock import patch
 from models.base_model import BaseModel
-from models import storage
-from models.amenity import Amenity
 
-# Define the TestAmenity class
 class TestAmenity(unittest.TestCase):
     def setUp(self):
         self.amenity = Amenity()

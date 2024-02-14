@@ -2,9 +2,7 @@
 
 # Import the modules
 from models.base_model import BaseModel
-from models import storage
 
-# Define the class Amenity that inherits from BaseModel
 class Amenity(BaseModel):
     # Public class attribute
     name: str = ""
