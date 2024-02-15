@@ -4,12 +4,7 @@
 import unittest
 from models.base_model import BaseModel
 from models.city import City
-from models import storage
 
-# Define the TestCity class
-class TestCity(unittest.TestCase):
-    def setUp(self):
-        self.city = City()
 
     def test_save_method(self):
         # Call the save method
@@ -48,4 +43,3 @@ class TestCity(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

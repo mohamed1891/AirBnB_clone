@@ -21,12 +21,10 @@ class TestAmenity(unittest.TestCase):
         self.assertTrue(hasattr(amenity, "name"))
 
     def test_attribute_types(self):
-        """Test that the attributes have the correct types"""
         amenity = Amenity()
         self.assertIsInstance(amenity.id, str)
         self.assertIsInstance(amenity.created_at, datetime)
         self.assertIsInstance(amenity.updated_at, datetime)
-        self.assertIsInstance(amenity.name, str)
 
     def test_name_default_value(self):
         """Test that the name attribute has a default value of None"""

@@ -15,7 +15,6 @@ from models.review import Review
 # Define the TestFileStorage class
 class TestFileStorage(unittest.TestCase):
     def setUp(self):
-        # Create an instance of FileStorage
         self.file_storage = FileStorage()
 
     def tearDown(self):

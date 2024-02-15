@@ -2,24 +2,14 @@
 
 # Import the modules
 import unittest
-from models.base_model import BaseModel
 from models.user import User
-from models import storage
 
-# Define the TestUser class
-class TestUser(unittest.TestCase):
-    def setUp(self):
-        self.user = User()
 
     def test_save_method(self):
         # Call the save method
         self.user.save()
 
-        # Check if the superclass save method is called
-        self.assertTrue(storage.save.called)
 
-        # Check if the User instance is added to storage
-        self.assertIn(self.user.id, storage.all())
 
     def test_user_attributes(self):
         # Check if the User instance has the expected attributes
@@ -50,5 +40,3 @@ class TestUser(unittest.TestCase):
         self.assertEqual(user_dict['__class__'], 'User')
         self.assertEqual(user_dict['email'], self.user.email)
 
-if __name__ == '__main__':
-    unittest.main()

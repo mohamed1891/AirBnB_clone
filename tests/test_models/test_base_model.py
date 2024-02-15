@@ -34,7 +34,6 @@ class TestBaseModel(unittest.TestCase):
         self.assertDictEqual(self.base_model.to_dict(), expected_dict)
 
     def test_save_method(self):
-        # Save the instance to the file
         self.base_model.save()
         # Reload the storage
         storage.reload()

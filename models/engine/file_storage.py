@@ -5,7 +5,6 @@ import os
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
-from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
@@ -32,7 +31,6 @@ class FileStorage:
             json.dump(new_dict, f)
 
     def reload(self):
-        """Deserializes the JSON file to __objects"""
         try:
             with open(FileStorage.__file_path, mode='r',
                       encoding='utf-8') as f:
@@ -44,8 +42,3 @@ class FileStorage:
                 FileStorage.__objects[key] = obj
         except FileNotFoundError:
             pass
-
-
-# Create a unique FileStorage instance for the application
-storage = FileStorage()
-storage.reload()

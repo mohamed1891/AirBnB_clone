@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-def storage():
     from models.engine.file_storage import FileStorage
-    storage = FileStorage()
-    storage.reload()
-    return storage
+storage = FileStorage()
+storage.reload()
