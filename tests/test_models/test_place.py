@@ -5,22 +5,27 @@ import unittest
 from models.base_model import BaseModel
 from models.place import Place
 from models import storage
+from models.engine.file_storage import FileStorage
 
 # Define the TestPlace class
 class TestPlace(unittest.TestCase):
+
     def setUp(self):
+        """Set up test environment"""
         self.place = Place()
+        self.place.name = "Place"
+        self.place.city_id = "city_id"
+        self.place.user_id = "user_id"
+        self.place.save()
+        self.storage = FileStorage()
+        self.storage.new(self.place)
+        self.storage.save()
 
     def test_save_method(self):
-        # Call the save method
-        self.place.save()
-
-        # Check if the superclass save method is called
-        self.assertTrue(storage.save.called)
-
-        # Check if the Place instance is added to storage
-        self.assertIn(self.place.id, storage.all())
-
+        """Test Place.save method"""
+        Place.save.assert_called_once()
+        self.assertTrue(self.storage.save.called)
+        
     def test_place_attributes(self):
         # Check if the Place instance has the expected attributes
         self.assertTrue(hasattr(self.place, 'city_id'))

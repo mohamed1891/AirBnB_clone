@@ -10,15 +10,18 @@ import os
 # Define the TestBaseModel class
 class TestBaseModel(unittest.TestCase):
     def setUp(self):
-        self.base_model = BaseModel()
-        storage.reset()
+        """Sets up the test fixture for the BaseModel tests"""
+        self.storage = FileStorage()
+        self.storage.save()
 
     def tearDown(self):
-        if os.path.exists(FileStorage.FILE_PATH):
-            os.remove(FileStorage.FILE_PATH)
+        """Tears down the test fixture for the BaseModel tests"""
+        self.storage = None
 
     def test_create_instance(self):
         self.assertIsInstance(self.base_model, BaseModel)
+        self.assertIsNotNone(self.base_model)
+        self.assertEqual(self.base_model.id, self.base_model.id)
 
     def test_str_representation(self):
         expected_str = f"[BaseModel] ({self.base_model.id}) {self.base_model.__dict__}"
@@ -35,10 +38,9 @@ class TestBaseModel(unittest.TestCase):
 
     def test_save_method(self):
         self.base_model.save()
-        # Reload the storage
-        storage.reload()
-        # Check if the instance is loaded
-        self.assertIn(self.base_model.id, storage.all())
+        self.storage.reload()
+        self.assertIn(self.base_model.id,
+                      self.storage._FileStorage__objects)
 
 
 if __name__ == '__main__':

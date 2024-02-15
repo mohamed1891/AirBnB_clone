@@ -16,11 +16,16 @@ from models.review import Review
 class TestFileStorage(unittest.TestCase):
     def setUp(self):
         self.file_storage = FileStorage()
+        self.file_storage.reload()
+
+    def test_new_method(self):
+        """Test that new method adds object to __objects dictionary"""
+        model = BaseModel()
+        key = f"{model.__class__.__name__}.{model.id}"
+        self.assertIn(key, self.file_storage._FileStorage__objects)
 
     def tearDown(self):
-        # Remove the file.json after each test
-        if os.path.exists("file.json"):
-            os.remove("file.json")
+        del self.file_storage
 
     def test_all_method(self):
         # Test if all method returns the __objects dictionary

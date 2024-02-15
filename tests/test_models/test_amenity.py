@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 # Import the modules
+import datetime
 import unittest
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -22,7 +23,9 @@ class TestAmenity(unittest.TestCase):
 
     def test_attribute_types(self):
         amenity = Amenity()
-        self.assertIsInstance(amenity.id, str)
+        self.assertIsInstance(amenity.name, str)
+        self.assertTrue(amenity.name)
+        self.assertAlmostEqual(amenity.price_by_night, 0)
         self.assertIsInstance(amenity.created_at, datetime)
         self.assertIsInstance(amenity.updated_at, datetime)
 

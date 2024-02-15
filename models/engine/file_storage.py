@@ -2,6 +2,7 @@
 
 import json
 import os
+from console import HBNBCommand
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -15,30 +16,61 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def all(self):
-        return FileStorage.__objects
+    def __init__(self):
+        self.objects = {}
 
+    def all(self, class_name):
+        """Returns all stored objects"""
+        if class_name in self.objects:
+            return self.objects[class_name]
+        else:
+            return []
+    
     def new(self, obj):
-        key = "{}.{}".format(obj.__class__.__name__, obj.id)
-        FileStorage.__objects[key] = obj
+        """Saves a new object"""
+        class_name = obj.__class__.__name__
+        if class_name not in self.objects:
+            self.objects[class_name] = []
+        self.objects[class_name].append(obj)
 
     def save(self):
-        """Serializes __objects to the JSON file (path: __file_path)"""
+        """Saves all objects to the JSON file"""
         new_dict = {}
-        for key, value in FileStorage.__objects.items():
-            new_dict[key] = value.to_dict()
-        with open(FileStorage.__file_path, mode='w', encoding='utf-8') as f:
+        for class_name in self.classes():
+            new_dict[class_name] = {}
+            for obj in self.all(class_name):
+                new_dict[class_name][obj.id] = obj.to_dict()
+        with open(self.file_path, 'w') as f:
             json.dump(new_dict, f)
+
+    def classes(self):
+        """Returns a dictionary of valid classes and their references"""
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.place import Place
+        from models.review import Review
+
+        classes = {"BaseModel": BaseModel,
+                   "User": User,
+                   "State": State,
+                   "City": City,
+                   "Amenity": Amenity,
+                   "Place": Place,
+                   "Review": Review}
+        return classes
 
     def reload(self):
         try:
-            with open(FileStorage.__file_path, mode='r',
-                      encoding='utf-8') as f:
-                json_dict = json.load(f)
-            for key, value in json_dict.items():
-                class_name = value["__class__"]
-                del value["__class__"]
-                obj = eval(class_name)(**value)
-                FileStorage.__objects[key] = obj
+            with open(self._FileStorage__file_path, 'r') as f:
+                data = f.read()
+                print(f"File Path: {self._FileStorage__file_path}")
+                print(f"File Content: {data}")
+                if data:
+                    self._FileStorage__objects = json.loads(data)
+                else:
+                    self._FileStorage__objects = {}
         except FileNotFoundError:
             pass
